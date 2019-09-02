@@ -485,7 +485,7 @@ abstract class AbstractGenerator implements GeneratorInterface
             foreach ($input as $i) {
                 $command .= ' ' . $this->escapeshellargs($i) . ' ';
             }
-            $command .= $this->escapeshellargs(($output);
+            $command .= $this->escapeshellargs($output);
         } else {
             $command .= ' ' . $this->escapeshellargs($input) . ' ' . $this->escapeshellargs($output);
         }
