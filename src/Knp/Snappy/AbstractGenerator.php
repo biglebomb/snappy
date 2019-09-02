@@ -444,7 +444,7 @@ abstract class AbstractGenerator implements GeneratorInterface
     protected function buildCommand($binary, $input, $output, array $options = [])
     {
         $command = $binary;
-        $escapedBinary = escapeshellarg($binary);
+        $escapedBinary = $this->escapeshellargs($binary);
         if (is_executable($escapedBinary)) {
             $command = $escapedBinary;
         }
@@ -461,21 +461,21 @@ abstract class AbstractGenerator implements GeneratorInterface
                 } elseif (is_array($option)) {
                     if ($this->isAssociativeArray($option)) {
                         foreach ($option as $k => $v) {
-                            $command .= ' --' . $key . ' ' . escapeshellarg($k) . ' ' . escapeshellarg($v);
+                            $command .= ' --' . $key . ' ' . $this->escapeshellargs($k) . ' ' . $this->escapeshellargs($v);
                         }
                     } else {
                         foreach ($option as $v) {
-                            $command .= ' --' . $key . ' ' . escapeshellarg($v);
+                            $command .= ' --' . $key . ' ' . $this->escapeshellargs($v);
                         }
                     }
                 } else {
                     // Dont't add '--' if option is "cover"  or "toc".
                     if (in_array($key, ['toc', 'cover'])) {
-                        $command .= ' ' . $key . ' ' . escapeshellarg($option);
+                        $command .= ' ' . $key . ' ' . $this->escapeshellargs($option);
                     } elseif (in_array($key, ['image-dpi', 'image-quality'])) {
                         $command .= ' --' . $key . ' ' . (int) $option;
                     } else {
-                        $command .= ' --' . $key . ' ' . escapeshellarg($option);
+                        $command .= ' --' . $key . ' ' . $this->escapeshellargs($option);
                     }
                 }
             }
@@ -483,14 +483,20 @@ abstract class AbstractGenerator implements GeneratorInterface
 
         if (is_array($input)) {
             foreach ($input as $i) {
-                $command .= ' ' . escapeshellarg($i) . ' ';
+                $command .= ' ' . $this->escapeshellargs($i) . ' ';
             }
-            $command .= escapeshellarg($output);
+            $command .= $this->escapeshellargs(($output);
         } else {
-            $command .= ' ' . escapeshellarg($input) . ' ' . escapeshellarg($output);
+            $command .= ' ' . $this->escapeshellargs($input) . ' ' . $this->escapeshellargs($output);
         }
 
         return $command;
+    }
+    
+    function escapeshellargs($input)
+    {
+        $input = str_replace('\'', '\\\'', $input);
+        return '\'' . $input . '\'';
     }
 
     /**
